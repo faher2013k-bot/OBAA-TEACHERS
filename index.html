@@ -11,12 +11,10 @@
     <style>
         :root {
             --primary-orange: #ff8c00;
-            --dark-orange: #e05d00;
             --gradient-orange: linear-gradient(135deg, #ff9933, #ff6600);
             --bg-color: #f8f9fa;
             --card-bg: #ffffff;
             --text-color: #2b2b2b;
-            --border-color: #e2e8f0;
         }
 
         * {
@@ -40,12 +38,11 @@
         .main-card {
             background: var(--card-bg);
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             border-radius: 24px;
             box-shadow: 0 10px 30px rgba(255, 140, 0, 0.15);
             padding: 20px;
             border: 1px solid rgba(255, 140, 0, 0.2);
-            position: relative;
         }
 
         .app-header {
@@ -80,7 +77,7 @@
         .custom-input:focus {
             border-color: var(--primary-orange);
             background: #fff;
-            box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
         }
 
         .search-btn {
@@ -93,7 +90,7 @@
             font-size: 16px;
             font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
             margin-bottom: 15px;
             transition: 0.2s;
         }
@@ -116,15 +113,14 @@
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            background: #e2e8f0;
-            color: #4a5568;
+            background: #6c757d;
+            color: white;
             white-space: nowrap;
             transition: 0.3s;
         }
 
         .tab-btn.active {
             background: #007bff;
-            color: white;
         }
 
         .subject-box {
@@ -237,14 +233,14 @@
         </div>
 
         <div class="filter-tabs">
-            <button class="tab-btn active" onclick="setFilter('all')">الكل</button>
-            <button class="tab-btn" onclick="setFilter('sabr')">سبر</button>
-            <button class="tab-btn" onclick="setFilter('quiz')">مذاكرة</button>
-            <button class="tab-btn" onclick="setFilter('exam')">فحص</button>
+            <button class="tab-btn active" onclick="setFilter('all', this)">الكل</button>
+            <button class="tab-btn" onclick="setFilter('sabr', this)">سبر</button>
+            <button class="tab-btn" onclick="setFilter('quiz', this)">مذاكرة</button>
+            <button class="tab-btn" onclick="setFilter('exam', this)">فحص</button>
         </div>
 
         <div id="subjectsContainer">
-            <!-- سيتم توليد الـ 13 مادة برمجياً هنا تلقائياً -->
+            <!-- الـ 13 مادة ستظهر هنا تلقائياً -->
         </div>
 
         <div class="action-buttons">
@@ -270,7 +266,7 @@
         }
         const db = firebase.database();
 
-        // قائمة الـ 13 مادة دراسية
+        // الـ 13 مادة دراسية كاملة
         const subjects = [
             "اللغة العربية", "الديانة الإسلامية", "اللغة الإنكليزية", "اللغة الفرنسية",
             "الرياضيات", "العلوم", "الفيزياء والكيمياء", "التاريخ", "الجغرافيا",
@@ -285,7 +281,7 @@
             
             subjects.forEach((sub, index) => {
                 container.innerHTML += `
-                    <div class="subject-box" data-sub-index="${index}">
+                    <div class="subject-box" data-index="${index}">
                         <div class="subject-title">${index + 1}. ${sub}</div>
                         <div class="grade-row section-sabr">
                             <span>سبر</span>
@@ -305,10 +301,10 @@
             applyFilter();
         }
 
-        function setFilter(type) {
+        function setFilter(type, btnElement) {
             currentFilter = type;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            btnElement.classList.add('active');
             applyFilter();
         }
 
@@ -324,11 +320,11 @@
             });
         }
 
-        // بحث عن طالب لجلب بياناته وتعديلها
+        // بحث عن الطالب وجلب بياناته لتعديلها
         function searchStudent() {
             const code = document.getElementById('searchCode').value.trim();
             if (!code) {
-                showAlert('الرجاء إدخال كود الطالب أولاً للبحث.', 'error');
+                showAlert('الرجاء إدخال كود الطالب أولاً.', 'error');
                 return;
             }
 
@@ -347,9 +343,8 @@
                     }
                     showAlert('تم العثور على بيانات الطالب بنجاح! 🚀', 'success');
                 } else {
-                    showAlert('الطالب غير موجود، يمكنك إدخال بياناته الجديدة وحفظها.', 'success');
+                    showAlert('الطالب غير موجود، يمكنك إدخال بياناته الجديدة.', 'error');
                     document.getElementById('studentName').value = '';
-                    // تفريغ الحقول
                     subjects.forEach((_, index) => {
                         document.getElementById(`sub_${index}_sabr`).value = '';
                         document.getElementById(`sub_${index}_quiz`).value = '';
@@ -359,7 +354,7 @@
             });
         }
 
-        // حفظ أو تعديل الطالب
+        // حفظ أو تعديل بيانات الطالب في Firebase
         function saveData() {
             const code = document.getElementById('searchCode').value.trim();
             const name = document.getElementById('studentName').value.trim();
@@ -393,7 +388,7 @@
             });
         }
 
-        // حذف الطالب
+        // حذف الطالب من Firebase
         function deleteData() {
             const code = document.getElementById('searchCode').value.trim();
             if (!code) {
@@ -419,7 +414,7 @@
             setTimeout(() => { box.style.display = 'none'; }, 3500);
         }
 
-        // تهيئة المواد عند فتح الصفحة
+        // تشغيل توليد المواد عند تحميل الصفحة
         renderSubjects();
     </script>
 </body>
