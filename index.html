@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الأساتذة - نظام OBAA</title>
+    <!-- خط كايرو المعتمد -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- مكتبة الفايربيس (Firebase 8) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        :root {
+            --primary-orange: #ff6b00;
+            --dark-orange: #e05d00;
+            --light-orange: #fff4ec;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #2b2b2b;
+            --border-color: #e2e8f0;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            max-width: 1100px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
+            color: white;
+            padding: 20px 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(255, 107, 0, 0.25);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--light-orange);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-orange);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-orange);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 6px;
+            width: auto;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        th {
+            background-color: var(--light-orange);
+            color: var(--dark-orange);
+            font-weight: 700;
+        }
+
+        tr:hover {
+            background-color: #fafafa;
+        }
+
+        .badge-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background-color: var(--light-orange);
+            color: var(--primary-orange);
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الهيدر الرئيسي -->
+    <div class="header">
+        <div>
+            <h1>نظام OBAA - لوحة التحكم بالنتائج</h1>
+            <div class="subtitle">إدخال وإدارة نتائج الطلاب مباشرة في قاعدة البيانات</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 10px; font-size: 14px;">
+            حالة الاتصال: <span id="connectionStatus" style="font-weight: bold; color: #a3ffb4;">جاري الاتصال...</span>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-container">
+        
+        <!-- قسم إضافة / تعديل نتيجة طالب -->
+        <div class="card">
+            <div class="card-title">📝 إضافة / تعديل طالب</div>
+            
+            <div id="alertBox" class="alert"></div>
+
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="studentCode">رمز الطالب (الكود الفريد):</label>
+                    <input type="text" id="studentCode" placeholder="مثال: 1001 أو STU1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentName">اسم الطالب الثلاثي:</label>
+                    <input type="text" id="studentName" placeholder="أدخل اسم الطالب الكامل" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentClass">الصف الدراسي:</label>
+                    <input type="text" id="studentClass" value="الثامن الأساسي" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentGpa">المعدل العام (%):</label>
+                    <input type="number" id="studentGpa" step="0.1" min="0" max="100" placeholder="مثال: 95.5" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentStatus">التقدير:</label>
+                    <select id="studentStatus">
+                        <option value="ممتاز">ممتاز</option>
+                        <option value="جيد جداً">جيد جداً</option>
+                        <option value="جيد">جيد</option>
+                        <option value="مقبول">مقبول</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="saveBtn">حفظ النتيجة في الفايربيس 💾</button>
+            </form>
+        </div>
+
+        <!-- قسم عرض وسجل الطلاب -->
+        <div class="card">
+            <div class="card-title">📋 قائمة النتائج المدخلة</div>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الكود</th>
+                            <th>الاسم</th>
+                            <th>الصف</th>
+                            <th>المعدل</th>
+                            <th>التقدير</th>
+                            <th>الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #888;">جاري تحميل البيانات من Firebase...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. إعدادات Firebase الخاصين بمشروعك (استبدل القيم ببيانات مشروعك الخاصة من Firebase Console)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // 2. تهيئة الفايربيس
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+        const studentsRef = database.ref('students');
+
+        // التحقق من الاتصال
+        database.ref('.info/connected').on('value', (snap) => {
+            const statusEl = document.getElementById('connectionStatus');
+            if (snap.val() === true) {
+                statusEl.textContent = "متصل 🟢";
+                statusEl.style.color = "#a3ffb4";
+            } else {
+                statusEl.textContent = "غير متصل 🔴";
+                statusEl.style.color = "#ffb3b3";
+            }
+        });
+
+        // 3. إضافة أو تحديث نتيجة طالب
+        document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const code = document.getElementById('studentCode').value.trim();
+            const name = document.getElementById('studentName').value.trim();
+            const studentClass = document.getElementById('studentClass').value.trim();
+            const gpa = document.getElementById('studentGpa').value.trim();
+            const status = document.getElementById('studentStatus').value;
+
+            if (!code || !name) return;
+
+            // رفع البيانات إلى مسار الطلاب باستخدام الكود كـ Key
+            studentsRef.child(code).set({
+                name: name,
+                grade: studentClass,
+                gpa: gpa + "%",
+                status: status
+            }, (error) => {
+                if (error) {
+                    showAlert('حدث خطأ أثناء حفظ البيانات: ' + error.message, 'danger');
+                } else {
+                    showAlert('تم حفظ نتيجة الطالب بنجاح! 🚀', 'success');
+                    document.getElementById('studentForm').reset();
+                    document.getElementById('studentClass').value = "الثامن الأساسي";
+                }
+            });
+        });
+
+        // 4. جلب القائمة وتحديث الجدول لحظياً (Realtime)
+        studentsRef.on('value', (snapshot) => {
+            const tableBody = document.getElementById('studentsTableBody');
+            tableBody.innerHTML = '';
+
+            if (!snapshot.exists()) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #888;">لا توجد نتائج مدخلة حتى الآن.</td></tr>';
+                return;
+            }
+
+            snapshot.forEach((childSnapshot) => {
+                const code = childSnapshot.key;
+                const student = childSnapshot.val();
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${code}</b></td>
+                    <td>${student.name || '-'}</td>
+                    <td>${student.grade || '-'}</td>
+                    <td><b>${student.gpa || '-'}</b></td>
+                    <td><span class="badge-status">${student.status || '-'}</span></td>
+                    <td>
+                        <button class="btn-danger" onclick="deleteStudent('${code}')">حذف 🗑️</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        });
+
+        // 5. حذف طالب
+        function deleteStudent(code) {
+            if (confirm(`هل أنت تأكد من حذف نتيجة الطالب رقم (${code})؟`)) {
+                studentsRef.child(code).remove()
+                    .then(() => showAlert('تم حذف الطالب بنجاح.', 'success'))
+                    .catch((err) => showAlert('فشل الحذف: ' + err.message, 'danger'));
+            }
+        }
+
+        // عرض التنبيهات
+        function showAlert(msg, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert alert-${type}`;
+            alertBox.textContent = msg;
+            alertBox.style.display = 'block';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
+        }
+    </script>
+</body>
+</html>
