@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تطبيق OBAA - نتائج الطلاب</title>
+    <title>لوحة تحكم الأساتذة - OBAA</title>
     <!-- خط كايرو العربي المميز -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <!-- مكتبات Firebase -->
@@ -40,14 +40,17 @@
         .mobile-card {
             background: #ffffff;
             width: 100%;
-            max-width: 420px;
+            max-width: 500px;
             border-radius: 28px;
             box-shadow: var(--card-shadow);
-            padding: 30px 24px;
+            padding: 25px 20px;
             text-align: center;
             border: 1px solid rgba(255, 107, 0, 0.1);
             position: relative;
             overflow: hidden;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .mobile-card::before {
@@ -61,11 +64,11 @@
         }
 
         .brand-header {
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
         .brand-title {
-            font-size: 38px;
+            font-size: 32px;
             font-weight: 900;
             background: var(--gradient-orange);
             -webkit-background-clip: text;
@@ -75,137 +78,149 @@
         }
 
         .brand-subtitle {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: #777;
-            margin-top: 6px;
+            margin-top: 4px;
+        }
+
+        .connection-status {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            background: #fff3eb;
+            color: var(--primary-orange);
+        }
+
+        .form-container {
+            text-align: right;
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-left: 4px;
+            padding-right: 4px;
         }
 
         .input-group {
-            margin-bottom: 20px;
-            text-align: right;
+            margin-bottom: 12px;
         }
 
         .input-label {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: #444;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             padding-right: 4px;
         }
 
-        .custom-input {
+        .custom-input, .custom-select {
             width: 100%;
-            padding: 16px;
+            padding: 12px 14px;
             border: 2px solid #ffe0cc;
-            border-radius: 16px;
-            font-size: 18px;
+            border-radius: 14px;
+            font-size: 15px;
             font-weight: 700;
-            text-align: center;
+            text-align: right;
             outline: none;
             background-color: #fffaf7;
             color: var(--text-dark);
             transition: all 0.3s ease;
         }
 
-        .custom-input:focus {
+        .custom-input:focus, .custom-select:focus {
             border-color: var(--primary-orange);
             background-color: #ffffff;
-            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.15);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
         }
 
-        .search-btn {
+        .action-btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: var(--gradient-orange);
             color: #ffffff;
             border: none;
-            border-radius: 16px;
-            font-size: 18px;
+            border-radius: 14px;
+            font-size: 16px;
             font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 107, 0, 0.3);
+            box-shadow: 0 6px 15px rgba(255, 107, 0, 0.3);
             transition: all 0.2s ease;
+            margin-top: 5px;
         }
 
-        .search-btn:active {
+        .action-btn:active {
             transform: scale(0.98);
-            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.2);
         }
 
-        .result-box {
+        .alert-box {
             display: none;
-            margin-top: 25px;
-            padding: 20px;
-            background: #fff8f3;
-            border: 2px solid #ffd8c2;
-            border-radius: 20px;
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        .students-list-section {
+            margin-top: 20px;
             text-align: right;
-            animation: fadeIn 0.4s ease-in-out;
+            border-top: 2px dashed #ffe0cc;
+            padding-top: 15px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result-title {
-            text-align: center;
-            font-size: 18px;
+        .list-title {
+            font-size: 15px;
             font-weight: 800;
             color: var(--primary-orange);
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px dashed #ffd8c2;
+            margin-bottom: 10px;
         }
 
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 15px;
-        }
-
-        .result-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .row-label {
-            font-weight: 700;
-            color: #666;
-        }
-
-        .row-value {
-            font-weight: 800;
-            color: #111;
-        }
-
-        .status-badge {
-            background: var(--gradient-orange);
-            color: #fff;
-            padding: 4px 14px;
+        .table-container {
+            max-height: 160px;
+            overflow-y: auto;
+            border: 1px solid #ffe0cc;
             border-radius: 12px;
-            font-size: 13px;
-            font-weight: 800;
         }
 
-        .error-box {
-            display: none;
-            margin-top: 18px;
-            padding: 14px;
-            background: #fff0f0;
-            border: 1px solid #ffcdd2;
-            color: #d32f2f;
-            border-radius: 14px;
-            font-size: 14px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: right;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ffe0cc;
+        }
+
+        th {
+            background-color: #fff4ec;
+            color: #e05d00;
+            font-weight: 800;
+            position: sticky;
+            top: 0;
+        }
+
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 700;
+            cursor: pointer;
         }
 
         .app-footer {
-            margin-top: 25px;
-            font-size: 12px;
+            margin-top: 15px;
+            font-size: 11px;
             font-weight: 700;
             color: #aaa;
         }
@@ -216,43 +231,73 @@
     <div class="mobile-card">
         <div class="brand-header">
             <div class="brand-title">OBAA</div>
-            <div class="brand-subtitle">نظام نتائج الطلاب الإلكتروني</div>
+            <div class="brand-subtitle">لوحة تحكم الأساتذة وإدارة النتائج</div>
         </div>
 
-        <div class="input-group">
-            <label class="input-label" for="studentCode">أدخل رمز الطالب الخاص بك:</label>
-            <input type="text" id="studentCode" class="custom-input" placeholder="مثال: 1001" autocomplete="off" inputmode="numeric">
+        <div id="connectionStatus" class="connection-status">جاري الاتصال بقاعدة البيانات... 🔄</div>
+
+        <div class="form-container">
+            <div id="alertBox" class="alert-box"></div>
+
+            <form id="teacherForm" onsubmit="saveStudent(event)">
+                <div class="input-group">
+                    <label class="input-label">رمز الطالب (الكود):</label>
+                    <input type="text" id="studentCode" class="custom-input" placeholder="مثال: 1001" required autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">اسم الطالب الثلاثي:</label>
+                    <input type="text" id="studentName" class="custom-input" placeholder="أدخل اسم الطالب الكامل" required autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">الصف الدراسي:</label>
+                    <input type="text" id="studentGrade" class="custom-input" value="الثامن الأساسي" required>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">المعدل العام (%):</label>
+                    <input type="number" id="studentGpa" class="custom-input" step="0.1" min="0" max="100" placeholder="مثال: 95.5" required>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">التقدير:</label>
+                    <select id="studentStatus" class="custom-select">
+                        <option value="ممتاز">ممتاز</option>
+                        <option value="جيد جداً">جيد جداً</option>
+                        <option value="جيد">جيد</option>
+                        <option value="مقبول">مقبول</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="action-btn">حفظ النتيجة في النظام 💾</button>
+            </form>
+
+            <div class="students-list-section">
+                <div class="list-title">📋 الطلاب المسجلين حالياً</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الكود</th>
+                                <th>الاسم</th>
+                                <th>المعدل</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <tr><td colspan="4" style="text-align: center; color: #888;">جاري التحميل...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
-        <button class="search-btn" onclick="fetchResult()">عرض النتيجة 🚀</button>
-
-        <div id="errorBox" class="error-box"></div>
-
-        <div id="resultBox" class="result-box">
-            <div class="result-title">بطاقة النتيجة الرسمية 🎓</div>
-            <div class="result-row">
-                <span class="row-label">اسم الطالب:</span>
-                <span class="row-value" id="resName">-</span>
-            </div>
-            <div class="result-row">
-                <span class="row-label">الصف الدراسي:</span>
-                <span class="row-value" id="resGrade">-</span>
-            </div>
-            <div class="result-row">
-                <span class="row-label">المعدل العام:</span>
-                <span class="row-value" id="resGpa" style="color: var(--primary-orange); font-size: 18px;">-</span>
-            </div>
-            <div class="result-row">
-                <span class="row-label">التقدير:</span>
-                <span class="status-badge" id="resStatus">-</span>
-            </div>
-        </div>
-
-        <div class="app-footer">تطبيق OBAA - جميع الحقوق محفوظة</div>
+        <div class="app-footer">تطبيق OBAA - لوحة الأساتذة</div>
     </div>
 
     <script>
-        // 1. ضع بيانات مشروعك الخاصة بـ Firebase هنا
+        // إعدادات Firebase الخاصة بك (نفس قاعدة البيانات ليرتبط مع تطبيق الطلاب مباشرة)
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -263,44 +308,86 @@
             appId: "YOUR_APP_ID"
         };
 
-        // تهيئة الفايربيس
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-        const database = firebase.database();
+        const db = firebase.database();
+        const studentsRef = db.ref('students');
 
-        function fetchResult() {
-            const codeInput = document.getElementById('studentCode').value.trim();
-            const resultBox = document.getElementById('resultBox');
-            const errorBox = document.getElementById('errorBox');
+        // حالة الاتصال
+        db.ref('.info/connected').on('value', (snap) => {
+            const statusEl = document.getElementById('connectionStatus');
+            if (snap.val() === true) {
+                statusEl.textContent = "متصل بقاعدة البيانات 🟢";
+                statusEl.style.color = "#28a745";
+                statusEl.style.background = "#d4edda";
+            } else {
+                statusEl.textContent = "منقطع عن الاتصال 🔴";
+                statusEl.style.color = "#dc3545";
+                statusEl.style.background = "#f8d7da";
+            }
+        });
 
-            resultBox.style.display = 'none';
-            errorBox.style.display = 'none';
+        // حفظ الطالب
+        function saveStudent(e) {
+            e.preventDefault();
+            const code = document.getElementById('studentCode').value.trim();
+            const name = document.getElementById('studentName').value.trim();
+            const grade = document.getElementById('studentGrade').value.trim();
+            const gpa = document.getElementById('studentGpa').value.trim() + "%";
+            const status = document.getElementById('studentStatus').value;
 
-            if (!codeInput) {
-                errorBox.textContent = 'يرجى إدخال رمز الطالب أولاً.';
-                errorBox.style.display = 'block';
+            studentsRef.child(code).set({ name, grade, gpa, status }, (error) => {
+                if (error) {
+                    showAlert('حدث خطأ أثناء الحفظ: ' + error.message, 'danger');
+                } else {
+                    showAlert('تم حفظ النتيجة بنجاح! 🚀', 'success');
+                    document.getElementById('teacherForm').reset();
+                    document.getElementById('studentGrade').value = "الثامن الأساسي";
+                }
+            });
+        }
+
+        // جلب البيانات وعرضها في الجدول المدمج
+        studentsRef.on('value', (snapshot) => {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+
+            if (!snapshot.exists()) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #888;">لا توجد نتائج مسجلة.</td></tr>';
                 return;
             }
 
-            // البحث في مسار الطلاب بالفايربيس
-            database.ref('students/' + codeInput).once('value').then((snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    document.getElementById('resName').textContent = data.name || '-';
-                    document.getElementById('resGrade').textContent = data.grade || 'الثامن الأساسي';
-                    document.getElementById('resGpa').textContent = data.gpa || '-';
-                    document.getElementById('resStatus').textContent = data.status || 'ناجح';
-
-                    resultBox.style.display = 'block';
-                } else {
-                    errorBox.textContent = 'رمز الطالب غير صحيح أو لم تعلن النتيجة بعد.';
-                    errorBox.style.display = 'block';
-                }
-            }).catch((error) => {
-                errorBox.textContent = 'حدث خطأ في الاتصال بقاعدة البيانات.';
-                errorBox.style.display = 'block';
+            snapshot.forEach((child) => {
+                const code = child.key;
+                const data = child.val();
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${code}</b></td>
+                        <td>${data.name}</td>
+                        <td><b>${data.gpa}</b></td>
+                        <td><button class="delete-btn" onclick="deleteStudent('${code}')">حذف</button></td>
+                    </tr>
+                `;
             });
+        });
+
+        // حذف طالب
+        function deleteStudent(code) {
+            if (confirm(`هل أنت متأكد من حذف الطالب رقم (${code})؟`)) {
+                studentsRef.child(code).remove()
+                    .then(() => showAlert('تم الحذف بنجاح.', 'success'))
+                    .catch((err) => showAlert('خطأ في الحذف: ' + err.message, 'danger'));
+            }
+        }
+
+        // إظهار التنبيهات المؤقتة
+        function showAlert(msg, type) {
+            const box = document.getElementById('alertBox');
+            box.className = `alert-box alert-${type}`;
+            box.textContent = msg;
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 3000);
         }
     </script>
 </body>
