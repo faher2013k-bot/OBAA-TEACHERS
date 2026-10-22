@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تحكم الأساتذة - OBAA</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- مكتبات Firebase الإصدار 8 الموثوقة -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -62,21 +63,24 @@
     </div>
 
     <script>
+        // ⚠️ مهم جداً: استبدل القيم التلية بـ firebaseConfig الخاصة بمشروعك من موقع Firebase ⚠️
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "ضع_هنا_apiKey_الخاص_بمشروعك",
+            authDomain: "obaa-xxxx.firebaseapp.com",
+            databaseURL: "https://obaa-xxxx-default-rtdb.firebaseio.com",
+            projectId: "obaa-xxxx",
+            storageBucket: "obaa-xxxx.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:xxxx"
         };
 
+        // تهيئة اتصال Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
 
+        // الـ 13 مادة كاملة
         const subjects = [
             "اللغة العربية", "الديانة الإسلامية", "اللغة الإنكليزية", "اللغة الفرنسية",
             "الرياضيات", "العلوم", "الفيزياء والكيمياء", "التاريخ", "الجغرافيا",
@@ -98,6 +102,7 @@
             });
         }
 
+        // البحث وإظهار البيانات المقترنة بالطالب
         function searchStudent() {
             const code = document.getElementById('searchCode').value.trim();
             if (!code) { showAlert('أدخل كود الطالب أولاً.', 'error'); return; }
@@ -119,15 +124,18 @@
                     showAlert('الطالب غير موجود، يمكنك إدخال بياناته الجديدة.', 'error');
                     document.getElementById('studentName').value = '';
                 }
+            }).catch(err => {
+                showAlert('خطأ في الاتصال: تأكد من مفاتيح Firebase', 'error');
             });
         }
 
+        // حفظ البيانات في الفايربيس
         function saveData() {
             const code = document.getElementById('searchCode').value.trim();
             const name = document.getElementById('studentName').value.trim();
             const grade = document.getElementById('studentGrade').value.trim();
 
-            if (!code || !name) {showAlert('أدخل الكود واسم الطالب على الأقل.', 'error'); return;}
+            if (!code || !name) { showAlert('أدخل الكود واسم الطالب على الأقل.', 'error'); return; }
 
             let subsData = [];
             subjects.forEach((subName, index) => {
@@ -147,16 +155,17 @@
                 if (error) {
                     showAlert('خطأ في الحفظ: ' + error.message, 'error');
                 } else {
-                    showAlert('تم الحفظ بنجاح تام! 🚀', 'success');
+                    showAlert('تم الحفظ والتحديث بنجاح تام! 🚀', 'success');
                 }
             });
         }
 
+        // حذف بيانات الطالب من الفايربيس
         function deleteData() {
             const code = document.getElementById('searchCode').value.trim();
             if (!code) { showAlert('أدخل كود الطالب للحذف.', 'error'); return; }
 
-            if (confirm('هل أنت متأكد من الحذف؟')) {
+            if (confirm('هل أنت متأكد من حذف هذا الطالب؟')) {
                 db.ref('students/' + code).remove().then(() => {
                     showAlert('تم الحذف بنجاح.', 'success');
                     document.getElementById('searchCode').value = '';
